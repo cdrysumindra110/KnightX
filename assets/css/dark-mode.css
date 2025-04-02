@@ -1,0 +1,18 @@
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #0a0a0a;
+    color: #ffffff;
+}
+
+.toggle-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-left: 15px;
+}
+
+.toggle-button:focus {
+    outline: none;
+}
