@@ -817,4 +817,24 @@ function updateUserPassword($user_id, $new_password) {
 
 function verifyPassword($password, $hashed_password) {
     return password_verify($password, $hashed_password);
+}
+
+/**
+ * Calculate shipping cost based on order total
+ * 
+ * @param float $subtotal The order subtotal
+ * @return float The shipping cost
+ */
+function calculateShippingCost($subtotal) {
+    // Get free shipping threshold from settings
+    $free_shipping_threshold = (float)getSetting('free_shipping_threshold');
+    $base_shipping_cost = (float)getSetting('shipping_cost');
+    
+    // If subtotal is greater than or equal to free shipping threshold, shipping is free
+    if ($subtotal >= $free_shipping_threshold) {
+        return 0;
+    }
+    
+    // Otherwise return base shipping cost
+    return $base_shipping_cost;
 } 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 22, 2025 at 06:10 PM
+-- Generation Time: May 24, 2025 at 08:09 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -256,8 +256,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `first_name`, `last_name`, `phone`, `address`, `city`, `state`, `country`, `postal_code`, `avatar`, `role`, `status`, `email_verified`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 'admin@knightx.com', '$2y$10$bEB7kKuK/zY5QGFpBpCWMO6pmCzf5QSp4Z1N2jq6FroUNF3VpQq0K', 'Admin', 'Admin', '9864666601', 'Exhibition Road', 'Kathmandu', 'Bagmati', 'Nepal', '64600', NULL, 'admin', 'active', 1, '2025-03-28 18:05:51', '2025-05-22 15:58:58'),
-(6, 'admin@knightx.com', '', '$2y$10$x3639GQrRBZ9d9TbjtVCaO5.b.OoAJKuBZtm0V3V8UrZjYbJ3Foka', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'admin', 'active', 0, '2025-05-22 16:01:27', '2025-05-22 16:01:27');
+(1, 'admin@knightx.com', 'admin@knightx.com', '$2y$10$L2IqZqBi0iWiq8ocimGbXuzG/ncfikIJafHUK4uGq2zuwkAapISrG', 'Admin', 'Admin', '9864666601', 'Exhibition Road', 'Kathmandu', 'Bagmati', 'Nepal', '64600', NULL, 'admin', 'active', 1, '2025-03-28 18:05:51', '2025-05-24 17:58:36'),
+(8, 'user@gmail.com', 'user@gmail.com', '$2y$10$L2IqZqBi0iWiq8ocimGbXuzG/ncfikIJafHUK4uGq2zuwkAapISrG', 'User', 'User', NULL, 'Bafal Marg', 'Kathmandu', 'Bagmati', 'US', '64600', NULL, 'admin', 'active', 1, '2025-05-24 17:57:42', '2025-05-24 18:08:12');
 
 -- --------------------------------------------------------
 
@@ -410,7 +410,7 @@ ALTER TABLE `settings`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `wishlist`
