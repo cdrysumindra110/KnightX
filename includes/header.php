@@ -4,7 +4,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <header class="main-header">
     <div class="header-top">
         <div class="container">
-            <div class="contact-info">
+            <!-- <div class="contact-info">
                 <a href="tel:+1234567890"><i class="fas fa-phone"></i> +1 (234) 567-890</a>
                 <a href="mailto:support@knightx.com"><i class="fas fa-envelope"></i> support@knightx.com</a>
             </div>
@@ -13,7 +13,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
                 <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                 <a href="#" class="social-link"><i class="fab fa-discord"></i></a>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -62,7 +62,17 @@ $current_page = basename($_SERVER['PHP_SELF']);
                         <li class="<?php echo $current_page == 'cart.php' ? 'active' : ''; ?>">
                             <a href="cart.php" class="cart-link">
                                 <i class="fas fa-shopping-cart"></i>
-                                <span class="cart-count">0</span>
+                                <span class="cart-count">
+                                    <?php
+                                    $cart_count = 0;
+                                    if (isset($_SESSION['cart'])) {
+                                        foreach ($_SESSION['cart'] as $quantity) {
+                                            $cart_count += $quantity;
+                                        }
+                                    }
+                                    echo $cart_count;
+                                    ?>
+                                </span>
                             </a>
                         </li>
                     </ul>

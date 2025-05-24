@@ -244,10 +244,22 @@ function addToCart($product_id, $quantity = 1) {
     }
     
     $product = getProduct($product_id);
-    if (!$product || $product['stock'] < $quantity) {
+    if (!$product) {
         return false;
     }
     
+    // Check if product is in stock
+    if ($product['stock'] <= 0) {
+        return false;
+    }
+    
+    // Check if adding quantity would exceed stock
+    $current_quantity = isset($_SESSION['cart'][$product_id]) ? $_SESSION['cart'][$product_id] : 0;
+    if (($current_quantity + $quantity) > $product['stock']) {
+        return false;
+    }
+    
+    // Add or update quantity
     if (isset($_SESSION['cart'][$product_id])) {
         $_SESSION['cart'][$product_id] += $quantity;
     } else {
@@ -716,4 +728,93 @@ function getProductStatistics() {
     $stats['out_of_stock_products'] = $result['out_of_stock'];
     
     return $stats;
+}
+
+function getProductBySlug($slug) {
+    $conn = getDBConnection();
+    $query = "SELECT p.*, c.name as category_name, c.slug as category_slug 
+              FROM products p 
+              LEFT JOIN categories c ON p.category_id = c.id 
+              WHERE p.slug = :slug";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':slug', $slug);
+    $stmt->execute();
+    return $stmt->fetch();
+}
+
+function getUserById($user_id) {
+    global $conn;
+    $user_id = (int)$user_id;
+    
+    $sql = "SELECT * FROM users WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    return $result->fetch_assoc();
+}
+
+function updateUserProfile($user_id, $data) {
+    global $conn;
+    $user_id = (int)$user_id;
+    
+    $sql = "UPDATE users SET 
+            first_name = ?,
+            last_name = ?,
+            email = ?,
+            phone = ?
+            WHERE id = ?";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ssssi", 
+        $data['first_name'],
+        $data['last_name'],
+        $data['email'],
+        $data['phone'],
+        $user_id
+    );
+    
+    return $stmt->execute();
+}
+
+function updateUserAddress($user_id, $data) {
+    global $conn;
+    $user_id = (int)$user_id;
+    
+    $sql = "UPDATE users SET 
+            address = ?,
+            city = ?,
+            state = ?,
+            postal_code = ?,
+            country = ?
+            WHERE id = ?";
+            
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssssi", 
+        $data['address'],
+        $data['city'],
+        $data['state'],
+        $data['postal_code'],
+        $data['country'],
+        $user_id
+    );
+    
+    return $stmt->execute();
+}
+
+function updateUserPassword($user_id, $new_password) {
+    global $conn;
+    $user_id = (int)$user_id;
+    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+    
+    $sql = "UPDATE users SET password = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $hashed_password, $user_id);
+    
+    return $stmt->execute();
+}
+
+function verifyPassword($password, $hashed_password) {
+    return password_verify($password, $hashed_password);
 } 

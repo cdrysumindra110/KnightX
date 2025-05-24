@@ -149,70 +149,15 @@ document.addEventListener('click', (e) => {
 });
 
 // Cart Functionality
-let cart = JSON.parse(localStorage.getItem('cart')) || [];
-const cartCount = document.querySelector('.cart-count');
-
 function updateCartCount() {
-    cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
-}
-
-function addToCart(productId, quantity = 1) {
-    const existingItem = cart.find(item => item.id === productId);
-    
-    if (existingItem) {
-        existingItem.quantity += quantity;
-    } else {
-        cart.push({ id: productId, quantity });
+    // The cart count is now handled by PHP in the header
+    // This function is kept for any dynamic updates if needed
+    const cartCount = document.querySelector('.cart-count');
+    if (cartCount) {
+        // Refresh the page to get the updated count from PHP
+        window.location.reload();
     }
-    
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    
-    // Show success message
-    showNotification('Product added to cart!');
 }
-
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCount();
-    
-    // Show success message
-    showNotification('Product removed from cart!');
-}
-
-// Notification System
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    gsap.from(notification, {
-        duration: 0.3,
-        y: -100,
-        opacity: 0,
-        ease: 'power3.out'
-    });
-    
-    // Animate out and remove
-    setTimeout(() => {
-        gsap.to(notification, {
-            duration: 0.3,
-            y: -100,
-            opacity: 0,
-            ease: 'power3.in',
-            onComplete: () => notification.remove()
-        });
-    }, 3000);
-        });
-    }, 3000);
-}
-
-// Initialize cart count on page load
-updateCartCount();
 
 // Mobile Menu Toggle
 const mobileMenuButton = document.querySelector('.mobile-menu-button');
@@ -230,4 +175,84 @@ if (mobileMenuButton && navLinks) {
         }
     });
 }
-*/
+
+// Add to Cart functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            
+            // Disable button while processing
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('product_id', productId);
+            formData.append('quantity', 1);
+            
+            fetch('add_to_cart.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update cart count
+                    const cartCount = document.querySelector('.cart-count');
+                    if (cartCount) {
+                        cartCount.textContent = data.cart_count;
+                    }
+                    
+                    // Show success message
+                    showNotification(data.message, 'success');
+                    
+                    // Add animation to cart icon
+                    const cartIcon = document.querySelector('.cart-link');
+                    cartIcon.classList.add('bounce');
+                    setTimeout(() => cartIcon.classList.remove('bounce'), 1000);
+                } else {
+                    if (data.redirect) {
+                        // Redirect to login page
+                        window.location.href = data.redirect;
+                    } else {
+                        // Show error message
+                        showNotification(data.message, 'error');
+                    }
+                }
+            })
+            .catch(error => {
+                showNotification('An error occurred. Please try again.', 'error');
+            })
+            .finally(() => {
+                // Re-enable button
+                this.disabled = false;
+                this.innerHTML = 'Add to Cart';
+            });
+        });
+    });
+});
+
+// Notification function
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Add animation class
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 3000);
+}
