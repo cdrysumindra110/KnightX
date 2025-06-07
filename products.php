@@ -129,9 +129,10 @@ $total_pages = ceil($total_products / $per_page);
                                 <span class="review-count">(<?php echo $product['review_count']; ?>)</span>
                             </div>
                             <div class="product-actions">
-                                <a href="product.php?slug=<?php echo $product['slug']; ?>" class="btn btn-primary">
+                                <!-- <a href="product.php?slug=<?php echo $product['slug']; ?>" class="btn btn-primary">
                                     View Details
-                                </a>
+                                </a> -->
+                                <a href="add_to_cart.php?id=<?php echo $product['id']; ?>" class="btn btn-primary">Add to cart</a>
                             </div>
                         </div>
                     </div>
