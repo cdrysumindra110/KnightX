@@ -3,45 +3,37 @@ session_start();
 require_once 'config/database.php';
 require_once 'includes/functions.php';
 
-header('Content-Type: application/json');
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    header('Location: products.php');
+    exit;
+}
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
-    $product_id = intval($_POST['product_id']);
-    
-    // Check if user is logged in
-    if (!isLoggedIn()) {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Please login to add items to cart',
-            'redirect' => 'login.php'
-        ]);
-        exit;
-    }
-    
-    // Add to cart
-    if (addToCart($product_id, 1)) {
-        // Calculate new cart count
-        $cart_count = 0;
-        if (isset($_SESSION['cart'])) {
-            foreach ($_SESSION['cart'] as $qty) {
-                $cart_count += $qty;
-            }
-        }
-        
-        echo json_encode([
-            'success' => true,
-            'message' => 'Product added to cart successfully!',
-            'cart_count' => $cart_count
-        ]);
-    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => 'Failed to add product to cart. Please check stock availability.'
-        ]);
-    }
+$product_id = (int)$_GET['id'];
+$product = getProductById($product_id);
+
+if (!$product) {
+    header('Location: products.php');
+    exit;
+}
+
+// Initialize cart if not set
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
+
+// If product already in cart, increase quantity
+if (isset($_SESSION['cart'][$product_id])) {
+    $_SESSION['cart'][$product_id]['quantity'] += 1;
 } else {
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid request'
-    ]);
-} 
+    $_SESSION['cart'][$product_id] = [
+        'id' => $product['id'],
+        'name' => $product['name'],
+        'image' => $product['image'],
+        'price' => $product['sale_price'] ?? $product['price'],
+        'quantity' => 1
+    ];
+}
+
+header('Location: cart.php');
+exit;
+?>

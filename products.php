@@ -190,60 +190,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'])) {
                     <button type="submit" class="btn btn-primary filter-submit">Apply Filters</button>
                 </form>
             </div>
+        </div>
 
-            <div class="products-content">
-                <h1><?php echo $category ? $category['name'] : 'All Products'; ?></h1>
-                
-                <?php if (empty($products)): ?>
-                    <div class="no-products">
-                        <p>No products found in this category.</p>
-                    </div>
-                <?php else: ?>
-                    <div class="products-grid">
-                        <?php foreach ($products as $product): ?>
-                            <div class="product-card">
-                                <div class="product-image">
-                                    <img src="assets/images/products/<?php echo $product['image']; ?>" 
-                                         alt="<?php echo htmlspecialchars($product['name']); ?>">
-                                    <?php if ($product['sale_price']): ?>
-                                        <span class="sale-badge">Sale</span>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="product-info">
-                                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
-                                    <div class="product-category">
-                                        <a href="products.php?category=<?php echo $product['category_slug']; ?>">
-                                            <?php echo htmlspecialchars($product['category_name']); ?>
-                                        </a>
-                                    </div>
-                                    <div class="product-price">
-                                        <?php if ($product['sale_price']): ?>
-                                            <span class="sale-price"><?php echo formatPrice($product['sale_price']); ?></span>
-                                            <span class="original-price"><?php echo formatPrice($product['price']); ?></span>
-                                        <?php else: ?>
-                                            <span class="price"><?php echo formatPrice($product['price']); ?></span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="product-rating">
-                                        <?php for ($i = 1; $i <= 5; $i++): ?>
-                                            <i class="fas fa-star <?php echo $i <= $product['rating'] ? 'active' : ''; ?>"></i>
-                                        <?php endfor; ?>
-                                        <span class="review-count">(<?php echo $product['review_count']; ?>)</span>
-                                    </div>
-                                    <div class="product-actions">
-                                        <a href="product.php?slug=<?php echo $product['slug']; ?>" class="btn btn-primary">
-                                            View Details
-                                        </a>
-                                        <button type="button" class="btn btn-success add-to-cart-btn" 
-                                                data-product-id="<?php echo $product['id']; ?>"
-                                                <?php echo $product['stock'] <= 0 ? 'disabled' : ''; ?>>
-                                            <?php echo $product['stock'] <= 0 ? 'Out of Stock' : 'Add to Cart'; ?>
-                                        </button>
-                                    </div>
-                                </div>
+        <?php if (empty($products)): ?>
+            <div class="no-products">
+                <p>No products found in this category.</p>
+            </div>
+        <?php else: ?>
+            <div class="products-grid">
+                <?php foreach ($products as $product): ?>
+                    <div class="product-card">
+                        <div class="product-image">
+                            <img src="assets/images/products/<?php echo $product['image']; ?>" 
+                                 alt="<?php echo htmlspecialchars($product['name']); ?>">
+                            <?php if ($product['sale_price']): ?>
+                                <span class="sale-badge">Sale</span>
+                            <?php endif; ?>
+                        </div>
+                        <div class="product-info">
+                            <h3><?php echo htmlspecialchars($product['name']); ?></h3>
+                            <div class="product-category">
+                                <a href="products.php?category=<?php echo $product['category_slug']; ?>">
+                                    <?php echo htmlspecialchars($product['category_name']); ?>
+                                </a>
                             </div>
-                        <?php endforeach; ?>
+                            <div class="product-price">
+                                <?php if ($product['sale_price']): ?>
+                                    <span class="sale-price"><?php echo formatPrice($product['sale_price']); ?></span>
+                                    <span class="original-price"><?php echo formatPrice($product['price']); ?></span>
+                                <?php else: ?>
+                                    <span class="price"><?php echo formatPrice($product['price']); ?></span>
+                                <?php endif; ?>
+                            </div>
+                            <div class="product-rating">
+                                <?php for ($i = 1; $i <= 5; $i++): ?>
+                                    <i class="fas fa-star <?php echo $i <= $product['rating'] ? 'active' : ''; ?>"></i>
+                                <?php endfor; ?>
+                                <span class="review-count">(<?php echo $product['review_count']; ?>)</span>
+                            </div>
+                            <div class="product-actions">
+                                <a href="product.php?slug=<?php echo $product['slug']; ?>" class="btn btn-primary">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                <?php endforeach; ?>
+            </div>
 
                     <?php if ($total_pages > 1): ?>
                         <div class="pagination">

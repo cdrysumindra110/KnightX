@@ -1,4 +1,9 @@
 <?php
+require_once __DIR__ . '/../config/database.php';
+
+$db = new Database();
+$conn = $db->getConnection();
+
 // Database connection
 function getDBConnection() {
     static $conn = null;
@@ -9,6 +14,16 @@ function getDBConnection() {
     }
     return $conn;
 }
+require_once __DIR__ . '/../config/database.php';
+
+function getProductById($id) {
+    global $conn;
+
+    $stmt = $conn->prepare("SELECT * FROM products WHERE id = ?");
+    $stmt->execute([$id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
 
 /**
  * Sanitize user input
@@ -40,7 +55,7 @@ function generateOrderNumber() {
  * @return string The formatted price
  */
 function formatPrice($price) {
-    return '$' . number_format($price, 2);
+    return 'Rs.' . number_format($price, 2);
 }
 
 /**
@@ -90,6 +105,7 @@ function getProductsByCategory($category_id, $limit = null) {
 
 // Get featured products
 function getFeaturedProducts($limit = 8) {
+    
     $conn = getDBConnection();
     $query = "SELECT p.*, c.name as category_name, c.slug as category_slug 
               FROM products p 
